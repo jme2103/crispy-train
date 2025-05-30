@@ -6,6 +6,8 @@ import networkx as nx #type:ignore
 from gerrychain import Graph #type:ignore
 import networkx as nx #type:ignore
 
+#new comment
+
 #method to add adjacent nodes to graph
 def add_adjacent(num, graph, size):
     #north
