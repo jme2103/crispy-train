@@ -19,5 +19,7 @@ merged = npd.merge(demo_data, on="node")
 # Group by partition and district, then sum demographic columns
 grouped = merged.groupby(['partition', 'district'])[demo_cols].sum().reset_index()
 
+grouped = pd.melt(grouped, id_vars=['partition', 'district'], var_name='color', value_name='population')
+
 # Write to CSV
 grouped.to_csv("partition_district_sums.csv", index=False)
