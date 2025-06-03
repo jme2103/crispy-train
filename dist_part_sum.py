@@ -4,7 +4,7 @@ import csv
 
 # Load data
 npd = pd.read_csv("partitions.csv")  # columns: partition, node, district
-demo_data = pd.read_csv("demo_data.csv")  # columns: ID, Red, Blue, Green, Population
+demo_data = pd.read_csv("demo_data2.csv")  # columns: ID, Red, Blue, Green, Population
 
 # Rename 'ID' to 'node' for merging
 if 'ID' in demo_data.columns:

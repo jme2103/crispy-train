@@ -1,11 +1,58 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 import sys
 
 target_file = "partition_district_sums.csv"
 
 #add exception handling
+
+def entropy(dataframe, partition, x, y):
+    print("something")
+    single_partition = info[info['partition'] == 0].copy()
+    x_pop = single_partition.groupby(by=['partition', x], sort=True, as_index=False)['population'].sum()
+    y_pop = single_partition.groupby(['partition', y], sort=True, as_index=False)['population'].sum()
+    total_pop = single_partition['population'].sum()
+
+    #this is necessary to avoid division by zero
+    step0 = info[info['population'] > 0].copy()
+    
+    #is it necessary to worry abou the x part of the equation at all?
+    y_suffix = "_" + y
+    step1 = step0.merge(y_pop, on=[y], suffixes=('', y_suffix))
+    step1.drop(columns=[partition + "_" + y], inplace=True, errors='ignore')
+    print("printing step1")
+    print(step1)
+    step1['proportion_of_y'] = step1['population'] / step1['population' + y_suffix]
+    print(step1)
+    step1['aux_step'] = step1['proportion_of_y'] * np.log2(1 / step1['proportion_of_y'])
+    print(step1)
+    step2 = step1.groupby([partition, y], sort=True, as_index=False)['aux_step'].sum()
+    print(step2)
+    step2 = step2.merge(y_pop, on=y, suffixes=('', '_' + y))
+    step2.drop(columns=[partition + "_" + y], inplace=True, errors='ignore')
+    print(step2)
+    step2['proportional_entropy'] = step2['aux_step'] * (step2['population'] / total_pop)
+    final = step2.groupby([partition], sort=True, as_index=False)['proportional_entropy'].sum()
+    return final
+
+#read into file
+info = pd.read_csv(target_file)
+#info.drop(columns=['Total'], inplace=True)
+print(info)
+
+#wide to long
+#info = pd.melt(info, id_vars=['partition', 'district'], var_name='color', value_name='population')
+print(info)
+
+#feel  free to swap district and color or replace with any other value
+#------------important stuff here----------------
+info = entropy(info, 'partition', 'district', 'color')
+print(info)
+
+#export to csv
+info.to_csv('entropy2.csv', index=False)
+
 """
 def get_entropy(a, b):
     return (a / b) * np.log2(b / a) if a > 0 else 0
