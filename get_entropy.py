@@ -2,9 +2,12 @@ import pandas as pd # type: ignore
 import numpy as np # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import sys
+import time
 
-target_file = "partition_district_sums.csv"
-
+target_file = sys.argv[1]
+output_file = sys.argv[2]
+cddc = int(sys.argv[3])
+start_time = time.time()
 #add exception handling
 
 def entropy(dataframe, partition, x, y):
@@ -47,11 +50,18 @@ print(info)
 
 #feel  free to swap district and color or replace with any other value
 #------------important stuff here----------------
-info = entropy(info, 'partition', 'district', 'color')
+
+if cddc == 1:
+    info = entropy(info, 'partition', 'color', 'district')
+if cddc == 0:
+    info= entropy(info, 'partition', 'district', 'color')
+
 print(info)
 
 #export to csv
-info.to_csv('entropy2.csv', index=False)
+info.to_csv(output_file, index=False)
+
+print("--- %s seconds ---" % (time.time() - start_time))
 
 """
 def get_entropy(a, b):
